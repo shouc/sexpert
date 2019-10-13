@@ -7,13 +7,43 @@ $GENDER_TABLE_NAME = $wpdb->prefix . "sexpert_genders";
 $LIST_LIMIT = 5;
 
 function CONVERT_STATUS($status){
-    switch ($status):
+    switch ($status) {
         case 0:
             return "Unassigned";
         case 1:
             return "Assigned";
         case 2:
-            return "Replied";
+            return "Editing";
         case 3:
-            return "";
+            return "Edited";
+        case 4:
+            return "Sent";
+        default:
+            return "Unknown Status";
+    }
+}
+
+function CONVERT_GENDER($status){
+    switch ($status) {
+        case 0:
+            return "Trans Male";
+        case 1:
+            return "Cis Male";
+        case 2:
+            return "Tran Female";
+        case 3:
+            return "Cis Female";
+        case 4:
+            return "I don't know - Male";
+        case 5:
+            return "I don't know - Female";
+        case 6:
+            return "Don't want to disclose";
+        default:
+            return "Unknown Status";
+    }
+}
+
+function CONVERT_TIME($timestamp){
+    return $timestamp;
 }
