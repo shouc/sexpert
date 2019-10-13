@@ -24,13 +24,12 @@ class Inquiry_List_Table extends WP_List_Table
         $result = [];
         foreach ($this->get_data() as $res){
             $result[] = array(
-                "email" => $res->email,
                 "age" => $res->age,
                 "gender" => CONVERT_GENDER_CODE($res->gender),
                 "country" => $res->country,
                 "message" => $res->message,
                 "status" => CONVERT_STATUS_CODE($res->status),
-                "response" => $res->response,
+                "response" => $res->response ? $res->response : "No Response",
                 "time" => $res->time,
                 "assignee_name" => $res->assignee_name ? $res->assignee_name : "Not Assigned",
                 "assigner_name" =>
@@ -38,6 +37,18 @@ class Inquiry_List_Table extends WP_List_Table
             );
         }
         return $result;
+    }
+
+    function column_age($item) {
+        $actions = array();
+        if ($item->assignee_name){
+            $actions["delete"] = '<a onclick="open_unassign_modal()" href="#">Unassign</a>';
+            $actions["edit"] = '<a onclick="open_assign_modal()" href="#">Reassign</a>';
+        } else {
+            $actions["edit"] = '<a onclick="open_assign_modal()" href="#">Assign Inquiry</a>';
+        }
+
+        return sprintf('%1$s %2$s', $item['age'], $this->row_actions($actions) );
     }
 
     private function get_data() {
@@ -64,13 +75,21 @@ class Inquiry_List_Table extends WP_List_Table
             }
         }
 
-
         // Paging
         $offset = ((int) $this->get_pagenum() - 1) * $LIST_LIMIT;
+
+        // Where
+        $where = "";
+        if(!empty($_GET['status']))
+        {
+            $status = (int) $_GET['status'];
+            $where = $wpdb->prepare("WHERE i.status = %d", $status);
+        }
+
         return $wpdb->get_results($wpdb->prepare(
             "
                 SELECT 
-                    i.email, i.age, i.gender, i.country, i.message, i.status, i.response, i.time,
+                    i.age, i.gender, i.country, i.message, i.status, i.response, i.time,
                     assignee.user_login as assignee_name,
                     assigner.user_login as assigner_name
                 FROM $INQUIRY_TABLE_NAME AS i
@@ -78,7 +97,7 @@ class Inquiry_List_Table extends WP_List_Table
                 LEFT JOIN $USER_TABLE_NAME AS assigner ON i.assigner_id = assigner.id
                 ORDER BY i.$order_by $order
                 LIMIT %d, %d 
-            ",
+            " . $where,
             $offset, $LIST_LIMIT
         ));
     }
@@ -91,7 +110,6 @@ class Inquiry_List_Table extends WP_List_Table
 
     public function get_columns() {
         $columns = array(
-            "email" => "Email",
             "age" => "Age",
             "gender" => "Gender",
             "country" => "Country",
@@ -120,7 +138,6 @@ class Inquiry_List_Table extends WP_List_Table
 
     public function column_default( $item, $column_name ) {
         switch( $column_name ) {
-            case 'email':
             case 'age':
             case 'gender':
             case 'country':
