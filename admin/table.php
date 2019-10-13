@@ -26,14 +26,15 @@ class Inquiry_List_Table extends WP_List_Table
             $result[] = array(
                 "email" => $res->email,
                 "age" => $res->age,
-                "gender" => $res->gender,
+                "gender" => CONVERT_GENDER_CODE($res->gender),
                 "country" => $res->country,
                 "message" => $res->message,
-                "status" => $res->status,
+                "status" => CONVERT_STATUS_CODE($res->status),
                 "response" => $res->response,
                 "time" => $res->time,
-                "assignee_name" => $res->assignee_name,
-                "assigner_name" => $res->assigner_name,
+                "assignee_name" => $res->assignee_name ? $res->assignee_name : "Not Assigned",
+                "assigner_name" =>
+                    $res->assigner_name ? $res->assigner_name: "Not Assigned",
             );
         }
         return $result;

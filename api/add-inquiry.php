@@ -27,6 +27,8 @@ function add_inquiry(WP_REST_Request $request){
             'gender' => $gender,
             'country' => $country,
             'message' => $message,
+            'status' => 0,
+            'time' => time(),
         )
     );
 

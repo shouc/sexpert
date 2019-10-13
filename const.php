@@ -6,8 +6,8 @@ $COMMENT_TABLE_NAME = $wpdb->prefix . "sexpert_comments";
 $GENDER_TABLE_NAME = $wpdb->prefix . "sexpert_genders";
 $LIST_LIMIT = 5;
 
-function CONVERT_STATUS($status){
-    switch ($status) {
+function CONVERT_STATUS_CODE($status_code){
+    switch ($status_code) {
         case 0:
             return "Unassigned";
         case 1:
@@ -23,8 +23,8 @@ function CONVERT_STATUS($status){
     }
 }
 
-function CONVERT_GENDER($status){
-    switch ($status) {
+function CONVERT_GENDER_CODE($gender_code){
+    switch ($gender_code) {
         case 0:
             return "Trans Male";
         case 1:
@@ -40,7 +40,7 @@ function CONVERT_GENDER($status){
         case 6:
             return "Don't want to disclose";
         default:
-            return "Unknown Status";
+            return "Unknown Gender";
     }
 }
 
