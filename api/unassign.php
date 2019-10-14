@@ -18,7 +18,7 @@ function unassign(WP_REST_Request $request){
         array(
             'assigner_id'=> null,
             'assignee_id'=> null,
-            'status'=>1
+            'status'=>0
         ),
         array('id'=>$id)
     );
