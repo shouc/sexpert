@@ -3,7 +3,7 @@
 function status(WP_REST_Request $request){
     global $wpdb, $INQUIRY_TABLE_NAME;
     $id = (int) $request->get_param("id");
-    $new_status = (int) $request->get_param("status");
+    $new_status = $request->get_param("status");
     // TODO: add authorization
     if (!authorize("admin")){
         // get current status
@@ -12,13 +12,13 @@ function status(WP_REST_Request $request){
             $id
         ));
         // todo: add try catch
-        $current_status = (int) $current_status_object[0]->id;
+        $current_status = (int) $current_status_object[0]->status;
 
         if ($current_status >= $new_status){
             wp_send_json(
                 array(
                     "success" => false,
-                    "message" => "You are trying to overwrite status, not authorized",
+                    "message" => $new_status . "You are trying to overwrite status, not authorized" . $current_status,
                 )
             );
         }
