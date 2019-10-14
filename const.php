@@ -44,6 +44,36 @@ function CONVERT_GENDER_CODE($gender_code){
     }
 }
 
-function CONVERT_TIME($timestamp){
-    return $timestamp;
+function CONVERT_TIME($timestamp)
+{
+    if(!$timestamp) {
+        return "Unknown Date";
+    }
+
+    $periods         = array("second", "minute", "hour", "day", "week", "month", "year", "decade");
+    $lengths         = array("60","60","24","7","4.35","12","10");
+
+    $now             = time();
+
+    // is it future date or past date
+    if($now > $timestamp) {
+        $difference     = $now - $timestamp;
+        $tense         = "ago";
+
+    } else {
+        $difference     = $timestamp - $now;
+        $tense         = "from now";
+    }
+
+    for($j = 0; $difference >= $lengths[$j] && $j < count($lengths)-1; $j++) {
+        $difference /= $lengths[$j];
+    }
+
+    $difference = round($difference);
+
+    if($difference != 1) {
+        $periods[$j].= "s";
+    }
+
+    return "$difference $periods[$j] {$tense}";
 }
