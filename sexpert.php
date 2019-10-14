@@ -74,6 +74,7 @@ register_deactivation_hook( __FILE__, 'deactivate_sexpert' );
 
 
 require_once "admin/index.php";
+require_once "contributor/index.php";
 function setup_menu(){
     add_menu_page( 'Sexpert Page',
         'Sexpert Admin',
@@ -84,12 +85,15 @@ function setup_menu(){
         'Sexpert',
         'read',
         'sexpert',
-        'init_admin' );
+        'init_contributor' );
 }
 add_action('admin_menu', 'setup_menu');
 
 require_once __DIR__ . "/api/assign.php";
+require_once __DIR__ . "/api/unassign.php";
 require_once __DIR__ . "/api/add-inquiry.php";
+require_once __DIR__ . "/api/update-inquiry.php";
+
 function setup_restful(){
     register_rest_route( 'sexpert/v1', '/assignment/(?P<id>\d+)', array(
         'methods' => 'POST',
@@ -111,9 +115,9 @@ function setup_restful(){
         'methods' => 'DELETE',
         'callback' => 'delete_inquiry',
     ));
-    register_rest_route( 'sexpert/v1', '/inquiries', array(
-        'methods' => 'GET',
-        'callback' => 'get_inquiry',
+    register_rest_route( 'sexpert/v1', '/message_of_inquiry/(?P<id>\d+)', array(
+        'methods' => 'PATCH',
+        'callback' => 'submit_message',
     ));
 }
 add_action( 'rest_api_init', 'setup_restful');
@@ -122,6 +126,12 @@ require_once 'home/form.php';
 add_shortcode("sexpertform", 'form_creation');
 
 function setup_scripts() {
-    wp_enqueue_script( 'script', '/wp-content/plugins/sexpert/js/sexpert.js');
+    wp_enqueue_script('script', '/wp-content/plugins/sexpert/js/sexpert.js');
+    wp_localize_script('script', 'php_variables', array(
+            'nonce' => wp_create_nonce("wp_rest"),
+        )
+    );
+    wp_enqueue_style('style', '/wp-content/plugins/sexpert/css/sexpert.css');
 }
 add_action( 'wp_enqueue_scripts', 'setup_scripts' );
+add_action( 'admin_enqueue_scripts', 'setup_scripts' );
