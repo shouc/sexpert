@@ -30,7 +30,7 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
                 "message" => $res->message,
                 "status" => CONVERT_STATUS_CODE($res->status),
                 "response" => $res->response ? $res->response : "No Response",
-                "time" => $res->time,
+                "time" => CONVERT_TIME($res->time),
                 "assignee_name" => $res->assignee_name ? $res->assignee_name : "Not Assigned",
 
             );
@@ -42,10 +42,17 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
         $actions = array();
         $inquiry_id = $item["id"];
         $current_user_id = get_current_user_id();
+
+        $inquirer_info = $item['inquirer_info'];
+        $message = $item["message"];
+        $response = $item["response"];
+
         if ($item["assignee_name"] != "Not Assigned"){
             if ($item["assignee_name"] == wp_get_current_user()->user_login){
                 $actions["delete"] = "<a onclick='unassign_inquiry($inquiry_id, $current_user_id)' href='#'>Unassign</a>";
-                $actions["edit"] = "<a onclick='open_inquiry_modal($inquiry_id)' href='#'>Edit Response</a>";
+                $actions["edit"] = "<a 
+                    onclick='open_inquiry_modal($inquiry_id, `$inquirer_info`, `$message`, `$response`)' 
+                    href='#'>Edit Response</a>";
             } else {
                 $actions["edit"] = "<a onclick='open_inquiry_modal($inquiry_id)' href='#'>Comment</a>";
             }
@@ -87,8 +94,7 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
 
         // Where
         $where = "";
-        if(!empty($_GET['status']))
-        {
+        if($_GET['status'] != null) {
             $status = (int) $_GET['status'];
             $where = $wpdb->prepare("WHERE i.status = %d", $status);
         }
@@ -103,9 +109,10 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
                 FROM $INQUIRY_TABLE_NAME AS i
                 LEFT JOIN $USER_TABLE_NAME AS assignee ON i.assignee_id = assignee.id
                 LEFT JOIN $USER_TABLE_NAME AS assigner ON i.assigner_id = assigner.id
+                $where
                 ORDER BY i.$order_by $order
                 LIMIT %d, %d 
-            " . $where,
+            ",
             $offset, $LIST_LIMIT
         ));
     }
