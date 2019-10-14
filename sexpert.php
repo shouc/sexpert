@@ -120,9 +120,17 @@ function setup_restful(){
         'methods' => 'POST',
         'callback' => 'submit_response',
     ));
+    register_rest_route( 'sexpert/v1', '/response_of_inquiry/(?P<id>\d+)', array(
+        'methods' => 'PATCH',
+        'callback' => 'save_response',
+    ));
     register_rest_route( 'sexpert/v1', '/status/(?P<id>\d+)', array(
         'methods' => 'PATCH',
         'callback' => 'status',
+    ));
+    register_rest_route( 'sexpert/v1', '/mailing/(?P<id>\d+)', array(
+        'methods' => 'POST',
+        'callback' => 'send_response',
     ));
 }
 add_action( 'rest_api_init', 'setup_restful');
