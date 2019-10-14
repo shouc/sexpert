@@ -115,9 +115,9 @@ function setup_restful(){
         'methods' => 'DELETE',
         'callback' => 'delete_inquiry',
     ));
-    register_rest_route( 'sexpert/v1', '/message_of_inquiry/(?P<id>\d+)', array(
-        'methods' => 'PATCH',
-        'callback' => 'submit_message',
+    register_rest_route( 'sexpert/v1', '/response_of_inquiry/(?P<id>\d+)', array(
+        'methods' => 'POST',
+        'callback' => 'submit_response',
     ));
 }
 add_action( 'rest_api_init', 'setup_restful');
