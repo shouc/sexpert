@@ -94,6 +94,7 @@ require_once __DIR__ . "/api/unassign.php";
 require_once __DIR__ . "/api/add-inquiry.php";
 require_once __DIR__ . "/api/update-inquiry.php";
 require_once __DIR__ . "/api/status.php";
+require_once __DIR__ . "/api/comment.php";
 
 function setup_restful(){
     register_rest_route( 'sexpert/v1', '/assignment/(?P<id>\d+)', array(
@@ -131,6 +132,10 @@ function setup_restful(){
     register_rest_route( 'sexpert/v1', '/mailing/(?P<id>\d+)', array(
         'methods' => 'POST',
         'callback' => 'send_response',
+    ));
+    register_rest_route( 'sexpert/v1', '/comment_of_inquiry/(?P<id>\d+)', array(
+        'methods' => 'POST',
+        'callback' => 'comment',
     ));
 }
 add_action( 'rest_api_init', 'setup_restful');
