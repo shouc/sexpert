@@ -118,10 +118,11 @@ function open_inquiry_modal(i, inquirer_info, message, response) {
                 onchange="save_response(${i})">${response === "No response yet" ? "" : response}</textarea>
             <br><br>
             <button class="button button-secondary" onclick="submit_response(${i})">Submit</button>
-            <button class="button button-primary">Send</button>
+            <button class="button button-primary" onclick="send_response(${i})">Send</button>
         `
     )
 }
+
 
 function save_response(i) {
     patch("/?rest_route=/sexpert/v1/response_of_inquiry/" + i, {
@@ -139,12 +140,12 @@ function submit_response(i) {
     toggle_modal();
 }
 
-function send_response(i, t) {
-    post("/?rest_route=/sexpert/v1/response_of_inquiry/" + i, {
+function send_response(i) {
+    post("/?rest_route=/sexpert/v1/mailing/" + i, {
         'response': get_val("response"),
         '_wpnonce': php_variables.nonce
     });
-    if (t) {toggle_modal()}
+    toggle_modal();
 }
 
 function change_showing_status() {
