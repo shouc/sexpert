@@ -12,7 +12,7 @@ function comment(WP_REST_Request $request){
                 i.*, u.user_email
               FROM $INQUIRY_TABLE_NAME AS i 
               LEFT JOIN $USER_TABLE_NAME AS u ON u.id = i.assignee_id
-              WHERE id = %d
+              WHERE i.id = %d
             "
             , $id
         )
