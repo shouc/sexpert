@@ -114,7 +114,7 @@ function open_inquiry_modal(i, inquirer_info, message, response) {
             </div>
             <br>
             <textarea rows="10" 
-                id="response" 
+                id="response${i}" 
                 onchange="save_response(${i})">${response === "No response yet" ? "" : response}</textarea>
             <br><br>
             <button class="button button-secondary" onclick="submit_response(${i})">Submit</button>
@@ -124,9 +124,29 @@ function open_inquiry_modal(i, inquirer_info, message, response) {
 }
 
 
+function open_comment_modal(i, inquirer_info, message, response) {
+    toggle_modal(
+        `
+            <div class="blocks">
+                <div class='info'>${inquirer_info}</div
+                <br><br>
+                <strong>Inquiry</strong>
+                <div class='message'>${message}</div>
+                <strong>Response</strong>
+                <div class='message'>${response}</div>
+            </div>
+            <br>
+            <textarea rows="10" 
+                id="comment${i}" placeholder="Write your comment."></textarea>
+            <br><br>
+            <button class="button button-primary" onclick="send_comment(${i})">Send</button>
+        `
+    )
+}
+
 function save_response(i) {
     patch("/?rest_route=/sexpert/v1/response_of_inquiry/" + i, {
-        'response': get_val("response"),
+        'response': get_val("response" + i),
         '_wpnonce': php_variables.nonce
     })
 }
@@ -134,7 +154,7 @@ function save_response(i) {
 
 function submit_response(i) {
     post("/?rest_route=/sexpert/v1/response_of_inquiry/" + i, {
-        'response': get_val("response"),
+        'response': get_val("response" + i),
         '_wpnonce': php_variables.nonce
     });
     toggle_modal();
@@ -142,7 +162,15 @@ function submit_response(i) {
 
 function send_response(i) {
     post("/?rest_route=/sexpert/v1/mailing/" + i, {
-        'response': get_val("response"),
+        'response': get_val("response" + i),
+        '_wpnonce': php_variables.nonce
+    });
+    toggle_modal();
+}
+
+function send_comment(i) {
+    post("/?rest_route=/sexpert/v1/comment_of_inquiry/" + i, {
+        'comment': get_val("comment" + i),
         '_wpnonce': php_variables.nonce
     });
     toggle_modal();

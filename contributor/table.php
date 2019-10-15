@@ -54,7 +54,8 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
                     onclick='open_inquiry_modal($inquiry_id, `$inquirer_info`, `$message`, `$response`)' 
                     href='#'>Edit Response</a>";
             } else {
-                $actions["edit"] = "<a onclick='open_inquiry_modal($inquiry_id)' href='#'>Comment</a>";
+                $actions["edit"] = "<a onclick='open_comment_modal($inquiry_id, `$inquirer_info`, `$message`, `$response`)' 
+                    href='#'>Comment</a>";
             }
         } else {
             $inquiry_id = $item["id"];
