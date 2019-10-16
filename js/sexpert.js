@@ -1,3 +1,5 @@
+const countries = ["Afghanistan", "Åland Islands", "Albania", "Algeria", "American Samoa", "Andorra", "Angola", "Anguilla", "Antigua and Barbuda", "Argentina", "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "British Indian Ocean Territory", "British Virgin Islands", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Caribbean Netherlands", "Cayman Islands", "Central African Republic", "Chad", "Chile", "China", "Christmas Island", "Cocos", "Colombia", "Comoros", "Congo", "Congo", "Cook Islands", "Costa Rica", "Côte d’Ivoire", "Croatia", "Cuba", "Curaçao", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands", "Faroe Islands", "Fiji", "Finland", "France", "French Guiana", "French Polynesia", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guernsey", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Jamaica", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Macau", "Macedonia", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Martinique", "Mauritania", "Mauritius", "Mayotte", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Montserrat", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Caledonia", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island", "North Korea", "Northern Mariana Islands", "Norway", "Oman", "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Pitcairn Islands", "Poland", "Portugal", "Puerto Rico", "Qatar", "Réunion", "Romania", "Russia", "Rwanda", "Saint Barthélemy", "Saint Helena", "Saint Kitts and Nevis", "Saint Lucia", "Saint Martin", "Saint Pierre and Miquelon", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "São Tomé and Príncipe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Sint Maarten", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Georgia & South Sandwich Islands", "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Svalbard and Jan Mayen", "Swaziland", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tokelau", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Turks and Caicos Islands", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "U.S. Minor Outlying Islands", "U.S. Virgin Islands", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Wallis and Futuna", "Western Sahara", "Yemen", "Zambia", "Zimbabwe"];
+
 function get(url, d, ol) {
     for (let key in d){
         if (d.hasOwnProperty(key)){
@@ -22,7 +24,7 @@ function post(url, d, ol) {
 
     let xhr = new XMLHttpRequest();
     xhr.open('POST', url, true);
-    xhr.onload = ol ? function () {
+    xhr.onload = !ol ? function () {
         console.log(this.responseText);
     }: ol;
     xhr.send(data);
@@ -56,6 +58,14 @@ function del(url, d, ol) {
     xhr.send();
 }
 
+function error_handler(t) {
+    let response = JSON.parse(t.responseText);
+    if (!response["success"]){
+        alert(response["message"]);
+        throw new Error(response["message"]);
+    }
+}
+
 function get_val(id) {
     return document.getElementById(id).value
 }
@@ -79,24 +89,32 @@ function submit_inquiry() {
         'country': get_val("country"),
         'message': get_val("message"),
         'status': 0,
+    }, function() {
+        alert("success");
+        error_handler(this);
+        location.reload();
     });
-    location.reload();
 }
 
 function assign_inquiry(i, assignee_id) {
     post("/?rest_route=/sexpert/v1/assignment/" + i, {
         'assignee_id': assignee_id,
         '_wpnonce': php_variables.nonce
+    },function() {
+        error_handler(this);
+        location.reload();
     });
-    location.reload();
+
 }
 
 function unassign_inquiry(i, assignee_id) {
     del("/?rest_route=/sexpert/v1/assignment/" + i, {
         'assignee_id': assignee_id,
         '_wpnonce': php_variables.nonce
+    }, function() {
+        error_handler(this);
+        location.reload();
     });
-    location.reload();
 }
 
 function open_inquiry_modal(i, inquirer_info, message, response) {
@@ -156,24 +174,30 @@ function submit_response(i) {
     post("/?rest_route=/sexpert/v1/response_of_inquiry/" + i, {
         'response': get_val("response" + i),
         '_wpnonce': php_variables.nonce
+    }, function(){
+        error_handler(this);
+        toggle_modal();
     });
-    toggle_modal();
 }
 
 function send_response(i) {
     post("/?rest_route=/sexpert/v1/mailing/" + i, {
         'response': get_val("response" + i),
         '_wpnonce': php_variables.nonce
+    },function(){
+        error_handler(this);
+        toggle_modal();
     });
-    toggle_modal();
 }
 
 function send_comment(i) {
     post("/?rest_route=/sexpert/v1/comment_of_inquiry/" + i, {
         'comment': get_val("comment" + i),
         '_wpnonce': php_variables.nonce
+    }, function(){
+        error_handler(this);
+        toggle_modal();
     });
-    toggle_modal();
 }
 
 function change_showing_status() {
@@ -188,3 +212,16 @@ function change_showing_status() {
         window.location.href += ("&status=" + new_status);
     }
 }
+
+window.onload = function () {
+    if (/\?page_id=\d/.test(window.location.href)){
+        let country_elem = document.getElementById("country");
+        let options_html = "";
+        countries.forEach((country) => {
+            options_html += `
+                <option value="${country}" ${country === "United States" ? "selected" : ""}>${country}</option>
+            `
+        });
+        country_elem.innerHTML = options_html;
+    }
+};
