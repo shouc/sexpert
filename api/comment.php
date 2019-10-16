@@ -1,9 +1,7 @@
 <?php
 
 function comment(WP_REST_Request $request){
-    # TODO: Link $COMMENT_TABLE_NAME
     global $wpdb, $INQUIRY_TABLE_NAME, $COMMENT_TABLE_NAME, $USER_TABLE_NAME;
-
     $id = $request->get_param("id");
 
     $inquiry_info_obj = $wpdb->get_results(
@@ -40,11 +38,10 @@ function comment(WP_REST_Request $request){
         )
     );
 
-    # TODO: Emailing
+    # TODO: Email styling
     $subject = $sender_info->user_login . " sends you a comment!";
-    // $content = $
-    // wp_mail($inquiry_info->user_email, $subject, $content);
-
+    $content = "Hi";
+    wp_mail($inquiry_info->user_email, $subject, $content);
     wp_send_json(
         array(
             "success" => true,
