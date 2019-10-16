@@ -90,3 +90,28 @@
     margin-top: 20px;
     width: 100%;
 }
+
+.sexpert-form-input {
+    width: 100%;
+}
+
+.sexpert-form-select {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 0;
+    color: inherit;
+}
+
+.sexpert-form > .message {
+    display: block;
+    font-size: 85%;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.sexpert-form > textarea{
+    margin: 10px 0;
+    width: 100%;
+}
+
