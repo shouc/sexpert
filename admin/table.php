@@ -25,7 +25,7 @@ class Inquiry_List_Table extends WP_List_Table
         foreach ($this->get_data() as $res){
             $result[] = array(
                 "age" => $res->age,
-                "gender" => CONVERT_GENDER_CODE($res->gender),
+                "gender" => $res->gender,
                 "country" => $res->country,
                 "message" => $res->message,
                 "status" => CONVERT_STATUS_CODE($res->status),

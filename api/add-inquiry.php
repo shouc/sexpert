@@ -15,7 +15,7 @@ function add_inquiry(WP_REST_Request $request){
         );
     }
     $age = (int) $request->get_param("age");
-    $gender = (int) $request->get_param("gender");
+    $gender = $request->get_param("gender");
     $country = $request->get_param("country");
     $message = $request->get_param("message");
 

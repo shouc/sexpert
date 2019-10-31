@@ -23,10 +23,9 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
     private function get_parsed_data() {
         $result = [];
         foreach ($this->get_data() as $res){
-            $converted_gender = CONVERT_GENDER_CODE($res->gender);
             $result[] = array(
                 "id" => $res->id,
-                "inquirer_info" => "Age: $res->age<br>Gender: $converted_gender<br>Country: $res->country",
+                "inquirer_info" => "Age: $res->age<br>Gender: $res->gender<br>Country: $res->country",
                 "message" => $res->message,
                 "status" => CONVERT_STATUS_CODE($res->status),
                 "response" => $res->response ? $res->response : "No Response",
@@ -49,10 +48,18 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
 
         if ($item["assignee_name"] != "Not Assigned"){
             if ($item["assignee_name"] == wp_get_current_user()->user_login){
-                $actions["delete"] = "<a onclick='unassign_inquiry($inquiry_id, $current_user_id)' href='#'>Unassign</a>";
-                $actions["edit"] = "<a 
-                    onclick='open_inquiry_modal($inquiry_id, `$inquirer_info`, `$message`, `$response`)' 
-                    href='#'>Edit Response</a>";
+                if ($item["status"] != "Sent"){
+                    $actions["delete"] =
+                        "<a onclick='unassign_inquiry($inquiry_id, $current_user_id)' href='#'>Unassign</a>";
+                    $actions["edit"] = "<a 
+                        onclick='open_inquiry_modal($inquiry_id, `$inquirer_info`, `$message`, `$response`)' 
+                        href='#'>Edit Response</a>";
+                } else {
+                    $actions["edit"] = "<a 
+                        onclick='open_inquiry_modal_with_confirm($inquiry_id, `$inquirer_info`, `$message`, `$response`)' 
+                        href='#'>Edit Response</a>";
+                }
+
             } else {
                 $actions["edit"] = "<a onclick='open_comment_modal($inquiry_id, `$inquirer_info`, `$message`, `$response`)' 
                     href='#'>Comment</a>";

@@ -25,15 +25,30 @@ function form_creation(){
                     <span>Gender</span>
                 </th>
                 <th>
-                    <select class="sexpert-form-select" id="gender">
-                        <option value="0">Trans Male</option>
-                        <option value="1">Cis Male</option>
-                        <option value="2">Trans Female</option>
-                        <option value="3">Cis Female</option>
-                        <option value="4">I don't know - Male</option>
-                        <option value="5">I don't know - Female</option>
-                        <option value="6">Don't want to disclose</option>
-                    </select>
+                    <div onclick="show_gender_input()">
+                        <input type="radio" name="gender" value="0" id="transmale" />
+                        <label for="transmale">Trans Male</label>
+                        <br>
+
+                        <input type="radio" name="gender" value="1" id="cismale" />
+                        <label for="cismale">Cis Male</label>
+                        <br>
+
+                        <input type="radio" name="gender" value="2" id="transfemale"/>
+                        <label for="transfemale">Trans Female</label>
+                        <br>
+
+                        <input type="radio" name="gender" value="3" id="cisfemale" />
+                        <label for="cisfemale">Cis Female</label>
+                        <br>
+
+                        <input type="radio" name="gender" value="4" id="notlisted"  />
+                        <label for="notlisted">Not Listed</label>
+                    </div>
+
+
+                    <div id="not_listed_specify"></div>
+                    <br>
                 </th>
             </tr>
             <tr>

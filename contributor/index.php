@@ -69,15 +69,21 @@ function render_inquiry_assigned(){
     if (count($data) == 0){return "No inquiries found";}
     foreach ($data as $res){
         $inquiry_id = $res->id;
-        $converted_gender = CONVERT_GENDER_CODE($res->gender);
-        $inquirer_info = "Age: $res->age<br>Gender: $converted_gender<br>Country: $res->country";
+        $inquirer_info = "Age: $res->age<br>Gender: $res->gender<br>Country: $res->country";
         $message = $res->message;
+        if ($res->status != 4){
+            // open modal without warning
+            $func = "open_inquiry_modal";
+        } else {
+            $func = "open_inquiry_modal_with_confirm";
+        }
         $status = CONVERT_STATUS_CODE($res->status);
         $response = $res->response ? $res->response : "No response yet";
         $time = CONVERT_TIME($res->time);
         $assigner = $res->assigner_name;
+
         $html .= "
-            <div class='blocks' onclick='open_inquiry_modal($inquiry_id, `$inquirer_info`, `$message`, `$response`)'>
+            <div class='blocks' onclick='$func($inquiry_id, `$inquirer_info`, `$message`, `$response`)'>
                 <div class='info'>$inquirer_info</div>
                 <br>
                 <strong>Inquiry</strong>
