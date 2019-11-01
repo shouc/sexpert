@@ -39,11 +39,12 @@ function create_inquiry_table(){
               `country` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
               `message` longtext COLLATE utf8_unicode_ci,
               `status` int(2) DEFAULT NULL,
+              `time` int(11) DEFAULT NULL,
               `response` longtext COLLATE utf8_unicode_ci,
               `assignee_id` int(11) DEFAULT NULL,
               `assigner_id` int(11) DEFAULT NULL,
               PRIMARY KEY (`id`)
-            ) $charset_collate;";
+            ) $charset_collate";
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
     dbDelta( $sql );
 }
@@ -58,7 +59,7 @@ function create_comment_table(){
               `author_id` int(11) DEFAULT NULL,
               `time` int(11) DEFAULT NULL,
               PRIMARY KEY (`id`)
-            ) $charset_collate;";
+            ) $charset_collate";
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
     dbDelta( $sql );
 }
@@ -68,7 +69,8 @@ register_activation_hook( __FILE__, 'activate_sexpert' );
 
 // Deactivation
 function deactivate_sexpert() {
-    // echo "Deactivated";
+    create_inquiry_table();
+    create_comment_table();
 }
 register_deactivation_hook( __FILE__, 'deactivate_sexpert' );
 
