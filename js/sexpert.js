@@ -270,7 +270,7 @@ function show_gender_input(){
     if (document.getElementById("notlisted").checked){
         // show input
         document.getElementById("not_listed_specify").innerHTML = `
-            <br><br>
+            <br>
             <label>Specify your gender</label><br>
             <input class="sexpert-form-input" id="not_listed_input" />
         `

@@ -115,3 +115,19 @@
     width: 100%;
 }
 
+.gender-row{
+    display: flex;
+    justify-content: space-around;
+}
+
+.gender-col{
+    display: block;
+}
+
+#age{
+    margin-left: 20px;
+}
+
+#email{
+    margin-left: 20px;
+}
