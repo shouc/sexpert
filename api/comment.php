@@ -42,6 +42,7 @@ function comment(WP_REST_Request $request){
     $subject = $sender_info->user_login . " sends you a comment!";
     $content = "Hi";
     wp_mail($inquiry_info->user_email, $subject, $content);
+
     wp_send_json(
         array(
             "success" => true,
