@@ -125,9 +125,23 @@
 }
 
 #age{
+    margin-top: 17px;
     margin-left: 20px;
 }
 
 #email{
     margin-left: 20px;
+
+}
+
+.basic-info{
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.alert{
+    background: antiquewhite;
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: 2px;
 }
