@@ -43,7 +43,7 @@
     visibility: hidden;
     transform: scale(1.1);
     transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
-    z-index: 2000000;
+    z-index: 2;
 }
 
 .modal-content {
@@ -144,4 +144,10 @@
     margin: 20px 0;
     padding: 10px;
     border-radius: 2px;
+}
+
+.modal-textbox{
+    border: solid 1px #888888;
+    padding: 0 10px;
+
 }

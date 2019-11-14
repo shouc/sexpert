@@ -96,6 +96,12 @@ function toggle_modal(html) {
     }
 }
 
+function close_modal() {
+    if(confirm("This would erase everything you created!")){
+        location.reload();
+    }
+}
+
 function submit_inquiry() {
     // converting gender
     let gender_code = get_radio_val("gender");
@@ -173,7 +179,7 @@ function unassign_inquiry(i, assignee_id) {
         location.reload();
     });
 }
-
+let editor;
 function open_inquiry_modal(i, inquirer_info, message, response) {
     patch(URL_PREFIX + "sexpert/v1/status/" + i, {
         'status': 2,
@@ -188,14 +194,17 @@ function open_inquiry_modal(i, inquirer_info, message, response) {
                 <div class='message'>${message}</div>
             </div>
             <br>
-            <textarea rows="10" 
+            Your Response:
+            <div
+                class="modal-textbox"
                 id="response${i}" 
-                onchange="save_response(${i})">${response === "No response yet" ? "" : response}</textarea>
+                onchange="save_response(${i})">${response === "No response yet" ? "" : response}</div>
             <br><br>
             <button class="button button-secondary" onclick="submit_response(${i})">Submit</button>
             <button class="button button-primary" onclick="send_response(${i})">Send</button>
         `
-    )
+    );
+    editor = new MediumEditor(`#response${i}`);
 }
 
 function open_inquiry_modal_with_confirm(i, inquirer_info, message, response) {
@@ -216,12 +225,15 @@ function open_comment_modal(i, inquirer_info, message, response) {
                 <div class='message'>${response}</div>
             </div>
             <br>
-            <textarea rows="10" 
-                id="comment${i}" placeholder="Write your comment."></textarea>
+            Your Comment:
+            <div 
+                class="modal-textbox"
+                id="comment${i}">Your argument is great</div>
             <br><br>
             <button class="button button-primary" onclick="send_comment(${i})">Send</button>
         `
-    )
+    );
+    editor = new MediumEditor(`#comment${i}`);
 }
 
 function save_response(i) {
@@ -234,7 +246,7 @@ function save_response(i) {
 
 function submit_response(i) {
     post(URL_PREFIX + "sexpert/v1/response_of_inquiry/" + i, {
-        'response': get_val("response" + i),
+        'response':document.getElementById("response" + i).innerHTML,
         '_wpnonce': php_variables.nonce
     }, function(){
         error_handler(this);
@@ -244,7 +256,7 @@ function submit_response(i) {
 
 function send_response(i) {
     post(URL_PREFIX + "sexpert/v1/mailing/" + i, {
-        'response': get_val("response" + i),
+        'response': document.getElementById("response" + i).innerHTML,
         '_wpnonce': php_variables.nonce
     },function(){
         error_handler(this);
@@ -254,7 +266,7 @@ function send_response(i) {
 
 function send_comment(i) {
     post(URL_PREFIX + "sexpert/v1/comment_of_inquiry/" + i, {
-        'comment': get_val("comment" + i),
+        'comment': document.getElementById("comment" + i).innerHTML,
         '_wpnonce': php_variables.nonce
     }, function(){
         error_handler(this);
