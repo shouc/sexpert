@@ -292,7 +292,7 @@ function show_gender_input(){
         // show input
         document.getElementById("not_listed_specify").innerHTML = `
             <br>
-            <label>Specify your gender</label><br>
+            <label>Enter Your Gender Identity Here</label><br>
             <input class="sexpert-form-input" id="not_listed_input" />
         `
     } else {
