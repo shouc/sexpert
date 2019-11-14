@@ -145,9 +145,14 @@ function submit_inquiry() {
         alert("No email specified");
         return
     }
+    let age = get_val("age");
+    if (age < 1){
+        alert("Wrong age");
+        return
+    }
     post(URL_PREFIX + "sexpert/v1/inquiry/", {
         'email': email,
-        'age': get_val("age"),
+        'age': age,
         'gender': gender,
         'country': get_val("country"),
         'message': message,

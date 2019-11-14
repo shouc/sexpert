@@ -19,8 +19,7 @@ function form_creation(){
 
             <div>
                 <input class="sexpert-form-input" type="text" id="email">
-                <input class="sexpert-form-input" type="number" id="age"/>
-
+                <input class="sexpert-form-input" type="number" min="1" id="age"/>
             </div>
         </div>
 
