@@ -39,8 +39,8 @@ function comment(WP_REST_Request $request){
     );
 
     # TODO: Email styling
-    $subject = $sender_info->user_login . " sends you a comment!";
-    $content = "Hi";
+    $subject = $sender_info->user_login . " sends you a comment on inquiry $id!";
+    $content = "Here is the comment:\n$comment";
     wp_mail($inquiry_info->user_email, $subject, $content);
 
     wp_send_json(

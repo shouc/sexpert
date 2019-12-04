@@ -37,7 +37,7 @@ function submit(WP_REST_Request $request,
     if ($need_update_status){
         $new_data["status"] = $new_status;
         if ($new_status == 4){
-            wp_mail($inquiry_info_obj[0]->email, "Your request is resolved", $response);
+            wp_mail($inquiry_info_obj[0]->email, "Your inquiry is resolved", $response);
         }
     }
 

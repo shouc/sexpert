@@ -32,7 +32,7 @@ function add_inquiry(WP_REST_Request $request){
         )
     );
 
-    wp_mail($email, "We got your request!", "You are so cool");
+    wp_mail($email, "We got your request!", "Following is your message text:\n$message");
 
     wp_send_json(
         array(
