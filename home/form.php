@@ -1,7 +1,13 @@
 <?php
 
 function get_alert(){
-    return "1";
+    return "Thank you for considering our “Ask the Sexperts” feature! 
+    Please be aware that the more information you provide, 
+    the better we will be able to advise you. 
+    However, the Sexperts are not medical or legal professionals. 
+    This feature should not be used in place of established emergency services in your area. 
+    If you are in immediate danger or require more involved legal or medical care, 
+    please seek appropriate services.";
 }
 
 function form_creation(){
