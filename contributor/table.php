@@ -37,7 +37,7 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
         return $result;
     }
 
-    function column_inquirer_info($item) {
+    function column_id($item) {
         $actions = array();
         $inquiry_id = $item["id"];
         $current_user_id = get_current_user_id();
@@ -70,7 +70,7 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
                 "<a onclick='assign_inquiry($inquiry_id, $current_user_id)' href='#'>Take This Inquiry</a>";
         }
 
-        return sprintf('%1$s %2$s', $item['inquirer_info'], $this->row_actions($actions) );
+        return sprintf('%1$s %2$s', $item['id'], $this->row_actions($actions) );
     }
 
     private function get_data() {
@@ -133,6 +133,7 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
 
     public function get_columns() {
         $columns = array(
+            "id" => "Inquiry ID",
             "inquirer_info" => "Inquirer Info",
             "message" => "Message",
             "status" => "Status",
