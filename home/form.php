@@ -66,7 +66,7 @@ function form_creation(){
             <div id="not_listed_specify"></div>
         </div>
         <br>
-        <span>Country</span>
+        <span>Country or Region</span>
         <select class="sexpert-form-select" id="country"></select>
         <br><br>
 
