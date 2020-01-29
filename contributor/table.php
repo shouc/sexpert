@@ -25,6 +25,7 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
         foreach ($this->get_data() as $res){
             $result[] = array(
                 "id" => $res->id,
+                "email" => $res->email,
                 "inquirer_info" => "Age: $res->age<br>Gender: $res->gender<br>Country: $res->country",
                 "message" => $res->message,
                 "status" => CONVERT_STATUS_CODE($res->status),
@@ -111,6 +112,7 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
             "
                 SELECT 
                     i.id,
+                    i.email,
                     i.age, i.gender, i.country, i.message, i.status, i.response, i.time,
                     assignee.user_login as assignee_name,
                     assigner.user_login as assigner_name
@@ -134,6 +136,7 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
     public function get_columns() {
         $columns = array(
             "id" => "Inquiry ID",
+            "email" => "Email",
             "inquirer_info" => "Inquirer Info",
             "message" => "Message",
             "status" => "Status",
@@ -163,6 +166,7 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
             case 'status':
             case 'response':
             case 'time':
+            case 'email':
             case 'assignee_name':
                 return $item[ $column_name ];
             default:
