@@ -4,6 +4,9 @@ $USER_TABLE_NAME = $wpdb->prefix . "users";
 $INQUIRY_TABLE_NAME = $wpdb->prefix . "sexpert_inquiries";
 $COMMENT_TABLE_NAME = $wpdb->prefix . "sexpert_comments";
 $GENDER_TABLE_NAME = $wpdb->prefix . "sexpert_genders";
+$CONFIG_TABLE_NAME = $wpdb->prefix . "sexpert_config";
+
+$POST_TABLE_NAME = $wpdb->prefix . "posts";
 $LIST_LIMIT = 5;
 
 function CONVERT_STATUS_CODE($status_code){
