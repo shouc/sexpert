@@ -64,6 +64,26 @@ function create_comment_table(){
     dbDelta( $sql );
 }
 
+function create_config_table(){
+    global $wpdb, $CONFIG_TABLE_NAME;
+    $charset_collate = $wpdb->get_charset_collate();
+    $sql = "CREATE TABLE $CONFIG_TABLE_NAME (
+              `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+              `inquiry_received_title` longtext COLLATE utf8_unicode_ci,
+              `inquiry_received` longtext COLLATE utf8_unicode_ci,
+              `inquiry_resolved_title` longtext COLLATE utf8_unicode_ci,
+              `inquiry_resolved` longtext COLLATE utf8_unicode_ci,
+              `disabled_banner` longtext COLLATE utf8_unicode_ci,
+              `disclaimer` longtext COLLATE utf8_unicode_ci,
+              PRIMARY KEY (`id`)
+            ) $charset_collate";
+    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    dbDelta( $sql );
+    $wpdb->insert($CONFIG_TABLE_NAME, array(
+        "id"=>1
+    ));
+}
+
 
 register_activation_hook( __FILE__, 'activate_sexpert' );
 
@@ -71,6 +91,7 @@ register_activation_hook( __FILE__, 'activate_sexpert' );
 function deactivate_sexpert() {
     create_inquiry_table();
     create_comment_table();
+    create_config_table();
 }
 register_deactivation_hook( __FILE__, 'deactivate_sexpert' );
 
@@ -78,13 +99,13 @@ register_deactivation_hook( __FILE__, 'deactivate_sexpert' );
 require_once "admin/index.php";
 require_once "contributor/index.php";
 function setup_menu(){
-    add_menu_page( 'Sexpert Page',
+    add_menu_page( 'Sexpert Admin',
         'Sexpert Admin',
         'manage_options',
         'sexpert_admin',
         'init_admin' );
-    add_menu_page( 'Sexpert 2',
-        'Sexpert',
+    add_menu_page( 'Ask the Sexpert',
+        'Ask the Sexpert',
         'read',
         'sexpert',
         'init_contributor' );
@@ -97,6 +118,8 @@ require_once __DIR__ . "/api/add-inquiry.php";
 require_once __DIR__ . "/api/update-inquiry.php";
 require_once __DIR__ . "/api/status.php";
 require_once __DIR__ . "/api/comment.php";
+require_once __DIR__ . "/api/sexpert-status.php";
+
 
 function setup_restful(){
     register_rest_route( 'sexpert/v1', '/assignment/(?P<id>\d+)', array(
@@ -138,6 +161,22 @@ function setup_restful(){
     register_rest_route( 'sexpert/v1', '/comment_of_inquiry/(?P<id>\d+)', array(
         'methods' => 'POST',
         'callback' => 'comment',
+    ));
+    register_rest_route( 'sexpert/v1', '/status_sexpert', array(
+        'methods' => 'GET',
+        'callback' => 'get_sexpert_status',
+    ));
+    register_rest_route( 'sexpert/v1', '/status_sexpert', array(
+        'methods' => 'PATCH',
+        'callback' => 'change_sexpert_status',
+    ));
+    register_rest_route( 'sexpert/v1', '/config', array(
+        'methods' => 'GET',
+        'callback' => 'get_config',
+    ));
+    register_rest_route( 'sexpert/v1', '/config', array(
+        'methods' => 'PATCH',
+        'callback' => 'change_config',
     ));
 }
 add_action( 'rest_api_init', 'setup_restful');
