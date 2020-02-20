@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/sexpert-status.php";
 
 function submit(WP_REST_Request $request,
                 $need_update_status=false,
@@ -37,7 +38,11 @@ function submit(WP_REST_Request $request,
     if ($need_update_status){
         $new_data["status"] = $new_status;
         if ($new_status == 4){
-            wp_mail($inquiry_info_obj[0]->email, "Your inquiry is resolved", $response);
+            $configs = _get_config();
+            $content = str_replace("{message}", $inquiry_info_obj[0]->message, $configs->inquiry_received);
+            $content = str_replace("{response}", $response, $content);
+            $content = str_replace("{wrap}", "\n", $content);
+            wp_mail($inquiry_info_obj[0]->email, $configs->inquiry_received_title, $content);
         }
     }
 

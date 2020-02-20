@@ -2,6 +2,7 @@
 
 require_once __DIR__ . "/../const.php";
 require_once __DIR__ . "/../utils/mail.php";
+require_once __DIR__ . "/sexpert-status.php";
 
 function add_inquiry(WP_REST_Request $request){
     global $wpdb, $INQUIRY_TABLE_NAME;
@@ -31,9 +32,10 @@ function add_inquiry(WP_REST_Request $request){
             'time' => time(),
         )
     );
-
-    wp_mail($email, "We got your request!", "Following is your message text:\n$message");
-
+    $configs = _get_config();
+    $content = str_replace("{message}", $message, $configs->inquiry_received);
+    $content = str_replace("{wrap}", "\n", $content);
+    wp_mail($email, $configs->inquiry_received_title, $content);
     wp_send_json(
         array(
             "success" => true,
