@@ -1,5 +1,5 @@
 const countries = ["Afghanistan", "Åland Islands", "Albania", "Algeria", "American Samoa", "Andorra", "Angola", "Anguilla", "Antigua and Barbuda", "Argentina", "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "British Indian Ocean Territory", "British Virgin Islands", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Caribbean Netherlands", "Cayman Islands", "Central African Republic", "Chad", "Chile", "China", "Christmas Island", "Cocos", "Colombia", "Comoros", "Congo", "Congo", "Cook Islands", "Costa Rica", "Côte d’Ivoire", "Croatia", "Cuba", "Curaçao", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands", "Faroe Islands", "Fiji", "Finland", "France", "French Guiana", "French Polynesia", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guernsey", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras", "Hong Kong SAR", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Jamaica", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Macau SAR", "Macedonia", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Martinique", "Mauritania", "Mauritius", "Mayotte", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Montserrat", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Caledonia", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island", "North Korea", "Northern Mariana Islands", "Norway", "Oman", "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Pitcairn Islands", "Poland", "Portugal", "Puerto Rico", "Qatar", "Réunion", "Romania", "Russia", "Rwanda", "Saint Barthélemy", "Saint Helena", "Saint Kitts and Nevis", "Saint Lucia", "Saint Martin", "Saint Pierre and Miquelon", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "São Tomé and Príncipe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Sint Maarten", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Georgia & South Sandwich Islands", "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Svalbard and Jan Mayen", "Swaziland", "Sweden", "Switzerland", "Syria", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tokelau", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Turks and Caicos Islands", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "U.S. Minor Outlying Islands", "U.S. Virgin Islands", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Wallis and Futuna", "Western Sahara", "Yemen", "Zambia", "Zimbabwe"];
-const PROD = false;
+const PROD = true;
 const URL_PREFIX = PROD ? "/wordpress/?rest_route=/" : "/?rest_route=/";
 const IS_SEXPERT_PAGE_REGEX = PROD ? /ask-the-sexperts/ : /\?page_id=\d/;
 function get(url, d, ol) {
@@ -10,7 +10,7 @@ function get(url, d, ol) {
     }
     let xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
-    xhr.onload = ol ? function () {
+    xhr.onload = !ol ? function () {
         console.log(this.responseText);
     } : ol;
     xhr.send();
@@ -108,16 +108,16 @@ function submit_inquiry() {
     let gender = "Unknown";
     switch (gender_code) {
         case "0":
-            gender = "Trans Male";
+            gender = "Female";
             break;
         case "1":
-            gender = "Cis Male";
+            gender = "Male";
             break;
         case "2":
-            gender = "Tran Female";
+            gender = "Trans Male";
             break;
         case "3":
-            gender = "Cis Female";
+            gender = "Trans Female";
             break;
         case "4":
             gender = document.getElementById("not_listed_input").value;
@@ -200,16 +200,18 @@ function open_inquiry_modal(i, inquirer_info, message, response) {
             </div>
             <br>
             Your Response:
-            <div
+            <textarea
                 class="modal-textbox"
                 id="response${i}" 
-                onchange="save_response(${i})">${response === "No response yet" ? "" : response}</div>
+                onchange="save_response(${i})">${response === "No response yet" ? "" : response}</textarea>
             <br><br>
             <button class="button button-secondary" onclick="submit_response(${i})">Submit</button>
             <button class="button button-primary" onclick="send_response(${i})">Send</button>
         `
     );
-    editor = new MediumEditor(`#response${i}`);
+    const suneditor = SUNEDITOR.create((document.getElementById(`response${i}`)),{
+    });
+    suneditor.onChange = function (contents) { console.log('onChange', contents) }
 }
 
 function open_inquiry_modal_with_confirm(i, inquirer_info, message, response) {
@@ -250,13 +252,16 @@ function save_response(i) {
 
 
 function submit_response(i) {
-    post(URL_PREFIX + "sexpert/v1/response_of_inquiry/" + i, {
-        'response':document.getElementById("response" + i).innerHTML,
-        '_wpnonce': php_variables.nonce
-    }, function(){
-        error_handler(this);
-        toggle_modal();
-    });
+    if (confirm("Please confirm: an email is going to be sent after.")){
+        post(URL_PREFIX + "sexpert/v1/response_of_inquiry/" + i, {
+            'response':document.getElementById("response" + i).innerHTML,
+            '_wpnonce': php_variables.nonce
+        }, function(){
+            error_handler(this);
+            toggle_modal();
+        });
+    }
+
 }
 
 function send_response(i) {
@@ -276,6 +281,55 @@ function send_comment(i) {
     }, function(){
         error_handler(this);
         toggle_modal();
+    });
+}
+
+function get_status() {
+    get(URL_PREFIX + "sexpert/v1/status_sexpert/" , {}, function(v){
+        error_handler(this);
+        console.log(JSON.parse(this.response))
+        document.getElementById("status").innerHTML = JSON.parse(this.response).message ? "Activated": "Not activated";
+        document.getElementById("status_button").innerHTML = JSON.parse(this.response).message ? "Deactivate": "Activate";
+
+    });
+}
+
+function change_status() {
+    patch(URL_PREFIX + "sexpert/v1/status_sexpert/", {
+        '_wpnonce': php_variables.nonce
+    }, function(){
+        error_handler(this);
+        alert("Success");
+        location.reload();
+    });
+}
+
+function get_config() {
+    get(URL_PREFIX + "sexpert/v1/config/" , {}, function(v){
+        error_handler(this);
+        const content = JSON.parse(this.response).message;
+        document.getElementById("inquiry_received_title").value = content.inquiry_received_title;
+        document.getElementById("inquiry_received").value = content.inquiry_received;
+        document.getElementById("inquiry_resolved_title").value = content.inquiry_resolved_title;
+        document.getElementById("inquiry_resolved").value = content.inquiry_resolved;
+        document.getElementById("disabled_banner").value = content.disabled_banner;
+        document.getElementById("disclaimer").value = content.disclaimer;
+    });
+}
+
+function change_config() {
+    patch(URL_PREFIX + "sexpert/v1/config/", {
+        '_wpnonce': php_variables.nonce,
+        "inquiry_received_title": document.getElementById("inquiry_received_title").value,
+        "inquiry_received": document.getElementById("inquiry_received").value,
+        "inquiry_resolved_title": document.getElementById("inquiry_resolved_title").value,
+        "inquiry_resolved": document.getElementById("inquiry_resolved").value,
+        "disabled_banner": document.getElementById("disabled_banner").value,
+        "disclaimer": document.getElementById("disclaimer").value
+    }, function(){
+        error_handler(this);
+        alert("Success");
+        location.reload();
     });
 }
 
@@ -307,6 +361,7 @@ function show_gender_input(){
 
 window.onload = function () {
     if (IS_SEXPERT_PAGE_REGEX.test(window.location.href)){
+        window.location.href = "https://sexinfo.soc.ucsb.edu/sexinfo/ask-sexperts";
         let country_elem = document.getElementById("country");
         let options_html = "";
         countries.forEach((country) => {
