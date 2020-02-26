@@ -87,13 +87,19 @@ function get_radio_val(name) {
 }
 
 function toggle_modal(html) {
-    let modal = document.querySelector(".modal");
+    let modal = document.querySelector(".m0");
     modal.classList.toggle("show-modal");
     if (html){
-        document.getElementById("modal_content").innerHTML = html
+        document.getElementById("m0_content").innerHTML = html
     } else {
         location.reload();
     }
+}
+
+function toggle_modal_unchange(html) {
+    let modal = document.querySelector(".m1");
+    modal.classList.toggle("show-modal");
+    document.getElementById("m1_content").innerHTML = html
 }
 
 function close_modal() {
@@ -184,7 +190,7 @@ function unassign_inquiry(i, assignee_id) {
         location.reload();
     });
 }
-let editor;
+let editorInquiry = [];
 function open_inquiry_modal(i, inquirer_info, message, response) {
     patch(URL_PREFIX + "sexpert/v1/status/" + i, {
         'status': 2,
@@ -209,9 +215,8 @@ function open_inquiry_modal(i, inquirer_info, message, response) {
             <button class="button button-primary" onclick="send_response(${i})">Send</button>
         `
     );
-    const suneditor = SUNEDITOR.create((document.getElementById(`response${i}`)),{
+    editorInquiry[i] = SUNEDITOR.create((document.getElementById(`response${i}`)),{
     });
-    suneditor.onChange = function (contents) { console.log('onChange', contents) }
 }
 
 function open_inquiry_modal_with_confirm(i, inquirer_info, message, response) {
@@ -220,6 +225,7 @@ function open_inquiry_modal_with_confirm(i, inquirer_info, message, response) {
     }
 }
 
+let editorComment = [];
 function open_comment_modal(i, inquirer_info, message, response) {
     toggle_modal(
         `
@@ -240,7 +246,16 @@ function open_comment_modal(i, inquirer_info, message, response) {
             <button class="button button-primary" onclick="send_comment(${i})">Send</button>
         `
     );
-    editor = new MediumEditor(`#comment${i}`);
+    editorComment[i] = SUNEDITOR.create((document.getElementById(`comment${i}`)),{
+    });
+}
+
+function get_editor_val(i, v) {
+    if (v === "comment"){
+        return editorComment[i].getContents()
+    } else {
+        return editorInquiry[i].getContents()
+    }
 }
 
 function save_response(i) {
@@ -254,7 +269,7 @@ function save_response(i) {
 function submit_response(i) {
     if (confirm("Please confirm: an email is going to be sent after.")){
         post(URL_PREFIX + "sexpert/v1/response_of_inquiry/" + i, {
-            'response':document.getElementById("response" + i).innerHTML,
+            'response': get_editor_val(i, "inquiry"),
             '_wpnonce': php_variables.nonce
         }, function(){
             error_handler(this);
@@ -266,7 +281,7 @@ function submit_response(i) {
 
 function send_response(i) {
     post(URL_PREFIX + "sexpert/v1/mailing/" + i, {
-        'response': document.getElementById("response" + i).innerHTML,
+        'response': get_editor_val(i, "inquiry"),
         '_wpnonce': php_variables.nonce
     },function(){
         error_handler(this);
@@ -276,7 +291,7 @@ function send_response(i) {
 
 function send_comment(i) {
     post(URL_PREFIX + "sexpert/v1/comment_of_inquiry/" + i, {
-        'comment': document.getElementById("comment" + i).innerHTML,
+        'comment': get_editor_val(i, "comment"),
         '_wpnonce': php_variables.nonce
     }, function(){
         error_handler(this);
