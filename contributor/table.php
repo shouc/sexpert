@@ -20,6 +20,18 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
         $this->items = $this->get_parsed_data();
     }
 
+    private function shorten($v){
+        if (strlen($v) < 20){
+            return $v;
+        } else {
+            return substr($v, 0, 20) . "...";
+        }
+    }
+
+    private function toggle_modal_text($v){
+        return "<div onclick='toggle_modal_unchange(`$v`)'>" . $this->shorten($v) . "</div>";
+    }
+
     private function get_parsed_data() {
         $result = [];
         foreach ($this->get_data() as $res){
@@ -27,9 +39,11 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
                 "id" => $res->id,
                 "email" => $res->email,
                 "inquirer_info" => "Age: $res->age<br>Gender: $res->gender<br>Country: $res->country",
-                "message" => $res->message,
+                "message" => $this->toggle_modal_text($res->message),
+                "message_raw" => $res->message,
+                "response" => $this->toggle_modal_text($res->response),
+                "response_raw" => $res->reponse,
                 "status" => CONVERT_STATUS_CODE($res->status),
-                "response" => $res->response ? $res->response : "No Response",
                 "time" => CONVERT_TIME($res->time),
                 "assignee_name" => $res->assignee_name ? $res->assignee_name : "Not Assigned",
 
@@ -44,8 +58,8 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
         $current_user_id = get_current_user_id();
 
         $inquirer_info = $item['inquirer_info'];
-        $message = $item["message"];
-        $response = $item["response"];
+        $message = $item["message_raw"];
+        $response = $item["response_raw"];
 
         if ($item["assignee_name"] != "Not Assigned"){
             if ($item["assignee_name"] == wp_get_current_user()->user_login){
