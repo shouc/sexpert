@@ -9,14 +9,18 @@ require_once __DIR__ . "/../const.php";
 
 function init_contributor(){
     ?>
-    <script src="https://cdn.jsdelivr.net/npm/medium-editor@latest/dist/js/medium-editor.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/medium-editor@latest/dist/css/medium-editor.min.css" type="text/css" media="screen" charset="utf-8">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/medium-editor@5.23.3/dist/css/themes/beagle.min.css" type="text/css">
-
-    <div class='modal'>
+    <link href="https://cdn.jsdelivr.net/npm/suneditor@latest/dist/css/suneditor.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/suneditor@latest/dist/suneditor.min.js"></script>
+    <div class='modal m0'>
         <div class='modal-content'>
             <span class='close-button' onclick="close_modal()">×</span>
-            <div id='modal_content'></div>
+            <div id='m0_content'></div>
+        </div>
+    </div>
+    <div class='modal m1'>
+        <div class='modal-content'>
+            <span class='close-button' onclick="toggle_modal_unchange()">×</span>
+            <div id='m1_content'></div>
         </div>
     </div>
     <br>
