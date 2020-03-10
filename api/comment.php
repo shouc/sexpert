@@ -1,22 +1,27 @@
 <?php
 
+
 function get_comments_of_inquiry(WP_REST_Request $request){
-    global $wpdb, $COMMENT_TABLE_NAME;
+    global $wpdb, $COMMENT_TABLE_NAME, $USER_TABLE_NAME;
     $inquiry_id = $request->get_param("id");
-    $inquiry_info_obj = $wpdb->get_results(
+    $comment_info_obj = $wpdb->get_results(
         $wpdb->prepare("
               SELECT 
-                *
+                c.id, c.comment, c.time, u.user_login
               FROM $COMMENT_TABLE_NAME AS c
+              INNER JOIN $USER_TABLE_NAME AS u ON c.author_id = u.id
               WHERE c.inquiry_id = %d
             "
             , $inquiry_id
         )
     );
+    foreach ($comment_info_obj as &$comment) {
+        $comment->time = CONVERT_TIME($comment->time);
+    }
     wp_send_json(
         array(
             "success" => true,
-            "message" => $inquiry_info_obj,
+            "message" => $comment_info_obj,
         )
     );
 }
