@@ -52,16 +52,34 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
         return $result;
     }
 
+    private function get_comment_count($inquiry_id){
+        global $wpdb, $COMMENT_TABLE_NAME;
+        $inquiry_info_obj = $wpdb->get_results(
+            $wpdb->prepare("
+              SELECT 
+                COUNT(*) AS comment_count
+              FROM $COMMENT_TABLE_NAME AS c
+              WHERE c.inquiry_id = %d
+            "
+                , $inquiry_id
+            )
+        );
+        return $inquiry_info_obj[0]->comment_count;
+    }
+
     function column_id($item) {
         $actions = array();
         $inquiry_id = $item["id"];
         $current_user_id = get_current_user_id();
-
         $inquirer_info = $item['inquirer_info'];
         $message = $item["message_raw"];
         $response = $item["response_raw"];
-
+        $comment_count = $this->get_comment_count($item["id"]);
+        $plural_comment = $comment_count ? "s": "";
+        $actions["comment"] = "<a onclick='open_comment_modal($inquiry_id, `$inquirer_info`, `$message`, `$response`)' 
+                    href='#'>Comment$plural_comment ($comment_count)</a>";
         if ($item["assignee_name"] != "Not Assigned"){
+
             if ($item["assignee_name"] == wp_get_current_user()->user_login){
                 if ($item["status"] != "Sent"){
                     $actions["delete"] =
@@ -75,9 +93,6 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
                         href='#'>Edit Response</a>";
                 }
 
-            } else {
-                $actions["edit"] = "<a onclick='open_comment_modal($inquiry_id, `$inquirer_info`, `$message`, `$response`)' 
-                    href='#'>Comment</a>";
             }
         } else {
             $inquiry_id = $item["id"];
