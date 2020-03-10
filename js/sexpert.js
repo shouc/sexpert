@@ -267,26 +267,25 @@ function save_response(i) {
 
 
 function submit_response(i) {
-    if (confirm("Please confirm: an email is going to be sent after.")){
-        post(URL_PREFIX + "sexpert/v1/response_of_inquiry/" + i, {
+    post(URL_PREFIX + "sexpert/v1/response_of_inquiry/" + i, {
+        'response': get_editor_val(i, "inquiry"),
+        '_wpnonce': php_variables.nonce
+    }, function(){
+        error_handler(this);
+        toggle_modal();
+    });
+}
+
+function send_response(i) {
+    if (confirm("Please confirm: an email is going to be sent after.")) {
+        post(URL_PREFIX + "sexpert/v1/mailing/" + i, {
             'response': get_editor_val(i, "inquiry"),
             '_wpnonce': php_variables.nonce
-        }, function(){
+        }, function () {
             error_handler(this);
             toggle_modal();
         });
     }
-
-}
-
-function send_response(i) {
-    post(URL_PREFIX + "sexpert/v1/mailing/" + i, {
-        'response': get_editor_val(i, "inquiry"),
-        '_wpnonce': php_variables.nonce
-    },function(){
-        error_handler(this);
-        toggle_modal();
-    });
 }
 
 function send_comment(i) {
@@ -302,7 +301,6 @@ function send_comment(i) {
 function get_status() {
     get(URL_PREFIX + "sexpert/v1/status_sexpert/" , {}, function(v){
         error_handler(this);
-        console.log(JSON.parse(this.response))
         document.getElementById("status").innerHTML = JSON.parse(this.response).message ? "Activated": "Not activated";
         document.getElementById("status_button").innerHTML = JSON.parse(this.response).message ? "Deactivate": "Activate";
 
