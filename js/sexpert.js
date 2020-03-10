@@ -204,6 +204,9 @@ function open_inquiry_modal(i, inquirer_info, message, response) {
                 <strong>Inquiry</strong>
                 <div class='message'>${message}</div>
             </div>
+            <button class="button button-primary" id="show_comment_button" onclick="get_comments(${i})">Show Comments</button>
+            <div id="comment_block">
+            </div>
             <br>
             Your Response:
             <textarea
@@ -230,18 +233,21 @@ function open_comment_modal(i, inquirer_info, message, response) {
     toggle_modal(
         `
             <div class="blocks">
-                <div class='info'>${inquirer_info}</div
+                <div class='info'>${inquirer_info}</div>
                 <br><br>
                 <strong>Inquiry</strong>
                 <div class='message'>${message}</div>
                 <strong>Response</strong>
                 <div class='message'>${response}</div>
             </div>
+            <button class="button button-primary" id="show_comment_button" onclick="get_comments(${i})">Show Comments</button>
+            <div id="comment_block">
+            </div>
             <br>
             Your Comment:
-            <div 
+            <textarea
                 class="modal-textbox"
-                id="comment${i}">Your argument is great</div>
+                id="comment${i}">Your argument is great</textarea>
             <br><br>
             <button class="button button-primary" onclick="send_comment(${i})">Send</button>
         `
@@ -286,6 +292,32 @@ function send_response(i) {
             toggle_modal();
         });
     }
+}
+
+let is_comment_shown = false;
+function get_comments(i){
+    if (is_comment_shown) {
+        document.getElementById("comment_block").innerHTML = "";
+        is_comment_shown = false;
+        document.getElementById("show_comment_button").innerHTML = "Show Comments";
+        return
+    }
+    get(URL_PREFIX + `sexpert/v1/comments/${i}` , {}, function(v){
+        error_handler(this);
+        let comments = JSON.parse(this.response).message;
+        let comment_html = "";
+        comments.forEach((v) => {
+            comment_html += `
+                <div>
+                    <p style="display: flex;">${v.user_login}: ${v.comment}</p>
+                    <p>${v.time}</p>
+                </div>
+            `
+        });
+        document.getElementById("comment_block").innerHTML = comment_html;
+        document.getElementById("show_comment_button").innerHTML = "Hide Comments";
+        is_comment_shown = true;
+    });
 }
 
 function send_comment(i) {
