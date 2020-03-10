@@ -1,5 +1,26 @@
 <?php
 
+function get_comments_of_inquiry(WP_REST_Request $request){
+    global $wpdb, $COMMENT_TABLE_NAME;
+    $inquiry_id = $request->get_param("id");
+    $inquiry_info_obj = $wpdb->get_results(
+        $wpdb->prepare("
+              SELECT 
+                *
+              FROM $COMMENT_TABLE_NAME AS c
+              WHERE c.inquiry_id = %d
+            "
+            , $inquiry_id
+        )
+    );
+    wp_send_json(
+        array(
+            "success" => true,
+            "message" => $inquiry_info_obj,
+        )
+    );
+}
+
 function comment(WP_REST_Request $request){
     global $wpdb, $INQUIRY_TABLE_NAME, $COMMENT_TABLE_NAME, $USER_TABLE_NAME;
     $id = $request->get_param("id");

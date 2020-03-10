@@ -135,10 +135,6 @@ function setup_restful(){
         'methods' => 'POST',
         'callback' => 'add_inquiry',
     ));
-    register_rest_route( 'sexpert/v1', '/comment/(?P<id>\d+)', array(
-        'methods' => 'POST',
-        'callback' => 'comment',
-    ));
     register_rest_route( 'sexpert/v1', '/inquiry/(?P<id>\d+)', array(
         'methods' => 'DELETE',
         'callback' => 'delete_inquiry',
@@ -162,6 +158,10 @@ function setup_restful(){
     register_rest_route( 'sexpert/v1', '/comment_of_inquiry/(?P<id>\d+)', array(
         'methods' => 'POST',
         'callback' => 'comment',
+    ));
+    register_rest_route( 'sexpert/v1', '/comments/(?P<id>\d+)', array(
+        'methods' => 'GET',
+        'callback' => 'get_comments_of_inquiry',
     ));
     register_rest_route( 'sexpert/v1', '/status_sexpert', array(
         'methods' => 'GET',
