@@ -43,6 +43,7 @@ function create_inquiry_table(){
               `response` longtext COLLATE utf8_unicode_ci,
               `assignee_id` int(11) DEFAULT NULL,
               `assigner_id` int(11) DEFAULT NULL,
+              `is_emergency` int(2) DEFAULT 0, 
               PRIMARY KEY (`id`)
             ) $charset_collate";
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
