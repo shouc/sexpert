@@ -1,5 +1,5 @@
 const countries = ["Afghanistan", "Åland Islands", "Albania", "Algeria", "American Samoa", "Andorra", "Angola", "Anguilla", "Antigua and Barbuda", "Argentina", "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "British Indian Ocean Territory", "British Virgin Islands", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Caribbean Netherlands", "Cayman Islands", "Central African Republic", "Chad", "Chile", "China", "Christmas Island", "Cocos", "Colombia", "Comoros", "Congo", "Congo", "Cook Islands", "Costa Rica", "Côte d’Ivoire", "Croatia", "Cuba", "Curaçao", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands", "Faroe Islands", "Fiji", "Finland", "France", "French Guiana", "French Polynesia", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guernsey", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras", "Hong Kong SAR", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Jamaica", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Macau SAR", "Macedonia", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Martinique", "Mauritania", "Mauritius", "Mayotte", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Montserrat", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Caledonia", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island", "North Korea", "Northern Mariana Islands", "Norway", "Oman", "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Pitcairn Islands", "Poland", "Portugal", "Puerto Rico", "Qatar", "Réunion", "Romania", "Russia", "Rwanda", "Saint Barthélemy", "Saint Helena", "Saint Kitts and Nevis", "Saint Lucia", "Saint Martin", "Saint Pierre and Miquelon", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "São Tomé and Príncipe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Sint Maarten", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Georgia & South Sandwich Islands", "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Svalbard and Jan Mayen", "Swaziland", "Sweden", "Switzerland", "Syria", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tokelau", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Turks and Caicos Islands", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "U.S. Minor Outlying Islands", "U.S. Virgin Islands", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Wallis and Futuna", "Western Sahara", "Yemen", "Zambia", "Zimbabwe"];
-const PROD = false;
+const PROD = true;
 const URL_PREFIX = PROD ? "/wordpress/?rest_route=/" : "/?rest_route=/";
 const IS_SEXPERT_PAGE_REGEX = PROD ? /ask-the-sexperts/ : /\?page_id=\d/;
 function get(url, d, ol) {
@@ -296,15 +296,15 @@ function send_response(i) {
 
 let is_comment_shown = false;
 function get_comments(i){
-    if (is_comment_shown) {
-        document.getElementById("comment_block").innerHTML = "";
-        is_comment_shown = false;
-        document.getElementById("show_comment_button").innerHTML = "Show Comments";
-        return
-    }
     get(URL_PREFIX + `sexpert/v1/comments/${i}` , {}, function(v){
         error_handler(this);
         let comments = JSON.parse(this.response).message;
+        if (is_comment_shown) {
+            document.getElementById("comment_block").innerHTML = "";
+            is_comment_shown = false;
+            document.getElementById("show_comment_button").innerHTML = `Show ${comments.length} Comment(s)`;
+            return
+        }
         let comment_html = "";
         comments.forEach((v) => {
             comment_html += `
@@ -315,7 +315,7 @@ function get_comments(i){
             `
         });
         document.getElementById("comment_block").innerHTML = comment_html;
-        document.getElementById("show_comment_button").innerHTML = "Hide Comments";
+        document.getElementById("show_comment_button").innerHTML = `Hide ${comments.length} Comment(s)`;
         is_comment_shown = true;
     });
 }
@@ -327,6 +327,20 @@ function send_comment(i) {
     }, function(){
         error_handler(this);
         toggle_modal();
+    });
+}
+
+function make_emergency(i) {
+    patch(URL_PREFIX + "sexpert/v1/emergency/" + i, {}, function(){
+        error_handler(this);
+        location.reload();
+    });
+}
+
+function cancel_emergency(i) {
+    del(URL_PREFIX + "sexpert/v1/emergency/" + i, {}, function(){
+        error_handler(this);
+        location.reload();
     });
 }
 
