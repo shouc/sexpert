@@ -12,7 +12,6 @@
     outline: 0;
     transition: 50ms border-color ease-in-out;
     width: 320px;
-    overflow: hidden;
     cursor: pointer;
     background: #fff;
 }
@@ -26,6 +25,7 @@
 
 .blocks > .message {
     color: #888;
+    word-wrap: break-word;
 }
 
 .blocks > .response {
@@ -58,6 +58,7 @@
     max-height: 80vh;
     max-width: 800px;
     overflow: auto;
+    word-wrap: break-word;
 }
 
 .close-button {
@@ -150,4 +151,8 @@
     border: solid 1px #888888;
     padding: 0 10px;
 
+}
+
+.emergency{
+    background: antiquewhite !important;
 }
