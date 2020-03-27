@@ -71,7 +71,6 @@ function get_sexpert_status(WP_REST_Request $request){
     );
 }
 
-
 function change_sexpert_status(WP_REST_Request $request){
     global $wpdb, $POST_TABLE_NAME;
     if (!authorize("admin")){
@@ -83,9 +82,8 @@ function change_sexpert_status(WP_REST_Request $request){
         );
     }
 
-    $disabled_banner = _get_config()->disabled_banner;
     $CONTENT_ENABLED = "<!-- wp:paragraph --><p>[sexpertform]</p><!-- /wp:paragraph -->";
-    $CONTENT_DISABLED = "<!-- wp:paragraph --><p>$disabled_banner</p><!-- /wp:paragraph -->";
+    $CONTENT_DISABLED = "<!-- wp:paragraph -->[smartslider3 slider=4]<p>[sexpertoff]</p><!-- /wp:paragraph -->";
     $sexpert_post = $wpdb->get_results(
         $wpdb->prepare(
             "SELECT * FROM $POST_TABLE_NAME WHERE post_content = %s AND post_status='publish'",

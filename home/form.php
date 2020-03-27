@@ -72,3 +72,9 @@ function form_creation(){
     </div>
     <?php
 }
+
+
+function form_off(){
+    $disabled_banner = _get_config()->disabled_banner;
+    return "<p>$disabled_banner</p>";
+}
