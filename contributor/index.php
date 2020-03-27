@@ -53,6 +53,15 @@ function init_contributor(){
     <?php
 }
 
+function _shorten($v){
+    $v = strip_tags($v);
+    if (strlen($v) < 20){
+        return $v;
+    } else {
+        return substr($v, 0, 20) . "...";
+    }
+}
+
 function render_inquiry_assigned(){
     global $wpdb, $INQUIRY_TABLE_NAME, $USER_TABLE_NAME;
     $where = "";
@@ -79,6 +88,7 @@ function render_inquiry_assigned(){
         $inquiry_id = $res->id;
         $inquirer_info = "Age: $res->age<br>Gender: $res->gender<br>Country: $res->country";
         $message = $res->message;
+        $shorten_message = _shorten($message);
         if ($res->status != 4){
             // open modal without warning
             $func = "open_inquiry_modal";
@@ -87,17 +97,19 @@ function render_inquiry_assigned(){
         }
         $status = CONVERT_STATUS_CODE($res->status);
         $response = $res->response ? $res->response : "No response yet";
+        $shorten_response = _shorten($response);
         $time = CONVERT_TIME($res->time);
         $assigner = $res->assigner_name;
 
         $html .= "
             <div class='blocks' onclick='$func($inquiry_id, `$inquirer_info`, `$message`, `$response`)'>
+                <strong>Inquiry #$inquiry_id</strong>
                 <div class='info'>$inquirer_info</div>
                 <br>
                 <strong>Inquiry</strong>
-                <div class='message'>$message</div>
+                <div class='message'>$shorten_message</div>
                 <strong>Your Response</strong>
-                <div class='response'>$response</div>
+                <div class='response'>$shorten_response</div>
                 <div>
                     <span class='dashicons dashicons-clock'></span>$time
                     <span class='dashicons dashicons-admin-users'></span>$assigner

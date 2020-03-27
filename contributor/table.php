@@ -20,7 +20,8 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
         $this->items = $this->get_parsed_data();
     }
 
-    private function shorten($v){
+    public function shorten($v){
+        $v = strip_tags($v);
         if (strlen($v) < 20){
             return $v;
         } else {
@@ -46,7 +47,7 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
                 "status" => CONVERT_STATUS_CODE($res->status),
                 "time" => CONVERT_TIME($res->time),
                 "assignee_name" => $res->assignee_name ? $res->assignee_name : "Not Assigned",
-
+                "is_emergency" => $res->is_emergency,
             );
         }
         return $result;
@@ -99,8 +100,21 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
             $actions["edit"] =
                 "<a onclick='assign_inquiry($inquiry_id, $current_user_id)' href='#'>Take This Inquiry</a>";
         }
-
         return sprintf('%1$s %2$s', $item['id'], $this->row_actions($actions) );
+    }
+
+    function column_message($item) {
+        $actions = array();
+        $is_emergency = $item['is_emergency'];
+        $inquiry_id = $item["id"];
+        if ($is_emergency){
+            $actions["edit"] =
+                "<a onclick='cancel_emergency($inquiry_id)' href='#'>Cancel Emergency</a>";
+        } else {
+            $actions["edit"] =
+                "<a onclick='make_emergency($inquiry_id)' href='#'>Mark as Emergency</a>";
+        }
+        return sprintf('%1$s %2$s', $item['message'], $this->row_actions($actions) );
     }
 
     private function get_data() {
@@ -142,6 +156,7 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
                 SELECT 
                     i.id,
                     i.email,
+                    i.is_emergency,
                     i.age, i.gender, i.country, i.message, i.status, i.response, i.time,
                     assignee.user_login as assignee_name,
                     assigner.user_login as assigner_name
@@ -202,7 +217,10 @@ class Inquiry_Contributor_List_Table extends WP_List_Table
                 return print_r( $item, true ) ;
         }
     }
-
-
-
+    function single_row( $content ) {
+        $cl = $content["is_emergency"] == 1 ? "class='emergency'": "";
+        echo "<tr $cl>";
+        echo $this->single_row_columns( $content );
+        echo "</tr>\n";
+    }
 }
