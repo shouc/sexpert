@@ -11,6 +11,12 @@ function make_emergency(WP_REST_Request $request){
         ),
         array('id' => $id, 'is_emergency' => 0)
     );
+    wp_send_json(
+        array(
+            "success" => true,
+            "message" => "",
+        )
+    );
 }
 
 function cancel_emergency(WP_REST_Request $request){
@@ -23,5 +29,11 @@ function cancel_emergency(WP_REST_Request $request){
             'is_emergency' => 0,
         ),
         array('id' => $id, 'is_emergency' => 1)
+    );
+    wp_send_json(
+        array(
+            "success" => true,
+            "message" => "",
+        )
     );
 }
