@@ -120,6 +120,7 @@ require_once __DIR__ . "/api/update-inquiry.php";
 require_once __DIR__ . "/api/status.php";
 require_once __DIR__ . "/api/comment.php";
 require_once __DIR__ . "/api/sexpert-status.php";
+require_once __DIR__ . "/api/emergency.php";
 
 
 function setup_restful(){
@@ -179,11 +180,21 @@ function setup_restful(){
         'methods' => 'PATCH',
         'callback' => 'change_config',
     ));
+    register_rest_route( 'sexpert/v1', '/emergency/(?P<id>\d+)', array(
+        'methods' => 'PATCH',
+        'callback' => 'make_emergency',
+    ));
+    register_rest_route( 'sexpert/v1', '/emergency/(?P<id>\d+)', array(
+        'methods' => 'DELETE',
+        'callback' => 'cancel_emergency',
+    ));
 }
 add_action( 'rest_api_init', 'setup_restful');
 
 require_once 'home/form.php';
 add_shortcode("sexpertform", 'form_creation');
+add_shortcode("sexpertoff", 'form_off');
+
 
 function setup_scripts() {
     wp_enqueue_script('script', '/wp-content/plugins/sexpert/js/sexpert.js');
